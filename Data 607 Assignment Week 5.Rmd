@@ -1,0 +1,145 @@
+---
+title: "Data 607 Assignment Week 5"
+author: "Ajay Arora"
+date: "September 14, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+#1. Import libraries
+```{r}
+library(stringr)
+library(tidyr)
+library(dplyr)
+library('scales')
+library(ggplot2)
+```
+
+#2. Get .csv file
+
+```{r}
+csvfile <- read.csv("https://raw.githubusercontent.com/AjayArora35/Assignment-Week-5/master/AssignmentWeek5.csv", header=FALSE, sep=",", stringsAsFactors=FALSE)
+csvfile <- data.frame(csvfile)
+csvfile
+```
+
+#3. Assign headers to 'V1' and 'V2' then copy the first row as headers, etc.
+
+```{r}
+#Assign missing headers
+csvfile$V1[1] <- "Airline"
+csvfile$V2[1] <- "Status"
+csvfile
+#Copy the first row as headers
+names(csvfile) <- csvfile[1,]
+csvfile
+#Remove the first row
+csvfile <- csvfile[-c(1), ]
+csvfile
+#Remove the NA row as well
+csvfile <- csvfile[c(1,2,4,5), ]
+csvfile
+
+#Fill in the Airline missing column data 
+for (i in 1:dim(csvfile)[1]){
+  if (i %% 2 == 0){
+      csvfile$Airline[i] <-  csvfile$Airline[i-1]
+  }
+}
+
+
+csvfile
+```
+#4. Some Analysis
+
+#Now, take the wide table and make it long: tidyr (Pivot), and additional cleanup
+
+```{r}
+flights <- gather(csvfile, key = 'City', value = 'Flights', 3:7, convert=TRUE)
+flights
+
+#Remove new line character from city names and remove commas from number of flights
+flights$City <- str_replace_all(flights$City, "[\r\n]" , "")
+flights
+
+flights$Flights <- str_replace_all(flights$Flights, "[,]" , "")
+flights
+
+#Now, separate out the status column into On-time and Delayed 
+flights2 <-  flights %>% spread(Status, `Flights`, convert=TRUE)
+flights2
+
+#Now, add some percentages for On-Time and Delayed
+flights2 <- flights2 %>% 
+  mutate(total = delayed + `on time`,
+         OnTime = percent(`on time`/total*100, accuracy = .01, scale=1),
+         Delayed = percent(delayed/total*100, accuracy = .01, scale=1))
+flights2
+
+#Reference: http://www.sthda.com/english/wiki/ggplot2-barplots-quick-start-guide-r-software-and-data-visualization
+#Now, graph total flights for each airline
+ggplot(flights2,
+       aes(x=flights2$Airline,
+           y=flights2$total
+           ))+
+    geom_bar(stat="identity")
+
+#Graph Total flights for each city
+ggplot(flights2,
+       aes(x=flights2$City,
+           y=flights2$total, fill = flights2$Airline
+           ))+
+    geom_bar(stat="identity", position="dodge")
+
+#Graph percentage delays for all cities per airline
+ggplot(flights2,
+       aes(x=flights2$City,
+           y=flights2$Delayed, fill = flights2$Airline
+           ))+
+    geom_bar(stat="identity", position="dodge")
+
+```
+#5. Final Analysis
+
+```{r}
+#Best OnTime Percentage Rate
+
+flights3 <- flights2 %>% filter(flights2$OnTime == max(flights2$OnTime))
+flights3
+
+#Airline with the best OnTime arrival rate
+
+flights4 <- flights2 %>% 
+  group_by(Airline) %>% 
+  summarise(Delayed_Flights = sum(delayed), Total_Flights = sum(total)) %>% 
+  mutate(Delayed = (Delayed_Flights / Total_Flights)*100)
+
+flights4
+
+#Airline delay as percentage
+ggplot(flights4,
+       aes(x=flights4$Airline,
+           y=flights4$Delayed, fill = flights4$Airline
+           ))+
+    geom_bar(stat="identity", position="dodge")
+
+#Airline Total Flights
+ggplot(flights4,
+       aes(x=flights4$Airline,
+           y=flights4$Total_Flights, fill = flights4$Airline
+           ))+
+    geom_bar(stat="identity", position="dodge")
+
+#Airline Total Delayed Flights
+ggplot(flights4,
+       aes(x=flights4$Airline,
+           y=flights4$Delayed_Flights, fill = flights4$Airline
+           ))+
+    geom_bar(stat="identity", position="dodge")
+```
+
