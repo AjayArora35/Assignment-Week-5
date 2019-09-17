@@ -144,6 +144,6 @@ ggplot(flights4,
 ```
 
 #6. Conclusions
-As indicated by the above graphs, AM West had many more flights than Alaska.  The best arrival time was by Alaska to Phoneix where their on-time is a 94.85%.  Alaska's overall delay is at 13.27% compared with 10.89% with AM West.  Lastly, for most of the cities, with the exception of Phoenix, AM West has a larger percentage delay than Alaska.  
+As indicated by the above graphs, AM West had many more flights than Alaska.  The best arrival time was by Alaska to Phoneix where their on-time is a 94.85%.  Alaska's overall delay is at 13.27% compared with 10.89% with AM West.  Lastly, for each city, AM West has a larger percentage delay than Alaska.  
 
 
