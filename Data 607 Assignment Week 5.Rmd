@@ -18,6 +18,7 @@ library(tidyr)
 library(dplyr)
 library('scales')
 library(ggplot2)
+library(kableExtra)
 ```
 
 #2. Get .csv file
@@ -79,7 +80,9 @@ flights2 <- flights2 %>%
   mutate(total = delayed + `on time`,
          OnTime = percent(`on time`/total*100, accuracy = .01, scale=1),
          Delayed = percent(delayed/total*100, accuracy = .01, scale=1))
-flights2
+flights2 %>% 
+  kable() %>%
+  kable_styling()
 
 #Reference: http://www.sthda.com/english/wiki/ggplot2-barplots-quick-start-guide-r-software-and-data-visualization
 #Now, graph total flights for each airline
@@ -110,7 +113,9 @@ ggplot(flights2,
 #Best OnTime Percentage Rate
 
 flights3 <- flights2 %>% filter(flights2$OnTime == max(flights2$OnTime))
-flights3
+flights3%>% 
+  kable() %>%
+  kable_styling()
 
 #Airline with the best OnTime arrival rate
 
@@ -119,7 +124,9 @@ flights4 <- flights2 %>%
   summarise(Delayed_Flights = sum(delayed), Total_Flights = sum(total)) %>% 
   mutate(Delayed = (Delayed_Flights / Total_Flights)*100)
 
-flights4
+flights4%>% 
+  kable() %>%
+  kable_styling()
 
 #Airline delay as percentage
 ggplot(flights4,
