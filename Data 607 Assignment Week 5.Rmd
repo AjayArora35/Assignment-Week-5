@@ -24,7 +24,7 @@ library(kableExtra)
 #2. Get .csv file
 
 ```{r}
-csvfile <- read.csv("https://raw.githubusercontent.com/AjayArora35/Assignment-Week-5/master/AssignmentWeek5.csv", header=FALSE, sep=",", stringsAsFactors=FALSE)
+csvfile <- read.csv("https://raw.githubusercontent.com/AjayArora35/Data-607-Assignment-Week-5/master/AssignmentWeek5.csv", header=FALSE, sep=",", stringsAsFactors=FALSE)
 csvfile <- data.frame(csvfile)
 csvfile
 ```
