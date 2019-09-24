@@ -80,26 +80,27 @@ flights2 <- flights2 %>%
   mutate(total = delayed + `on time`,
          OnTime = percent(`on time`/total*100, accuracy = .01, scale=1),
          Delayed = percent(delayed/total*100, accuracy = .01, scale=1))
+#What is the percentage for on-time versus delayed
 flights2 %>% 
   kable() %>%
   kable_styling()
 
 #Reference: http://www.sthda.com/english/wiki/ggplot2-barplots-quick-start-guide-r-software-and-data-visualization
-#Now, graph total flights for each airline
+#What is the total flights for each airline?
 ggplot(flights2,
        aes(x=flights2$Airline,
            y=flights2$total
            ))+
     geom_bar(stat="identity")
 
-#Graph Total flights for each city
+#What is the total flights for each citry?
 ggplot(flights2,
        aes(x=flights2$City,
            y=flights2$total, fill = flights2$Airline
            ))+
     geom_bar(stat="identity", position="dodge")
 
-#Graph percentage delays for all cities per airline
+#What is the percentage delay for all cities per airline?
 ggplot(flights2,
        aes(x=flights2$City,
            y=flights2$Delayed, fill = flights2$Airline
@@ -110,14 +111,14 @@ ggplot(flights2,
 #5. Final Analysis
 
 ```{r}
-#Best OnTime Percentage Rate
+#What is the best On-time percentage rate?
 
 flights3 <- flights2 %>% filter(flights2$OnTime == max(flights2$OnTime))
 flights3%>% 
   kable() %>%
   kable_styling()
 
-#Airline with the best OnTime arrival rate
+#What is the best On-time arrival rate?
 
 flights4 <- flights2 %>% 
   group_by(Airline) %>% 
@@ -128,21 +129,21 @@ flights4%>%
   kable() %>%
   kable_styling()
 
-#Airline delay as percentage
+#What are the ariline delays as percentage?
 ggplot(flights4,
        aes(x=flights4$Airline,
            y=flights4$Delayed, fill = flights4$Airline
            ))+
     geom_bar(stat="identity", position="dodge")
 
-#Airline Total Flights
+#What are the airline total flights?
 ggplot(flights4,
        aes(x=flights4$Airline,
            y=flights4$Total_Flights, fill = flights4$Airline
            ))+
     geom_bar(stat="identity", position="dodge")
 
-#Airline Total Delayed Flights
+#What are the airline total delayed flights?
 ggplot(flights4,
        aes(x=flights4$Airline,
            y=flights4$Delayed_Flights, fill = flights4$Airline
